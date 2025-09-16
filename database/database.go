@@ -21,9 +21,14 @@ func ConnectDb(connstr string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	log.Println("Connected to PostgreSQL database")
 	return nil
+}
+
+func AddUser(email string, password string) error {
+	_, err := DB.Exec("INSERT INTO users (email,password) VALUES ($1,$2)", email, password)
+	return err
 }
 
 func Close() error {

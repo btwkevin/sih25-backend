@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/btwkevin/sih25-backend/handlers"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,4 +13,8 @@ func main() {
 			"status": "healthy",
 		})
 	})
+
+	app.Post("/signup", handlers.Signup)
+
+	app.Listen(":8080")
 }
