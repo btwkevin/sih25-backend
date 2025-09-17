@@ -11,19 +11,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v0.1.8
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd ~/sih25-backend                
-            git fetch origin              
-            git reset --hard origin/main
-            go mod tidy  
-            make                          
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Copy updated code to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "mkdir -p ~/app-temp"
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/app-temp
+
+      - name: Replace app code on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            set -e
+            mkdir -p ~/sih25-backend
+            rm -rf ~/sih25-backend/*
+            cp -r ~/app-temp/* ~/sih25-backend/
+            rm -rf ~/app-temp
+          EOF
+
+      - name: Build and restart Go server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            set -e
+            cd ~/sih25-backend
+            go mod tidy
+            make
             sudo systemctl restart sih25-backend
+          EOF
