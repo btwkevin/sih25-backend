@@ -66,3 +66,14 @@ func Signin(c *fiber.Ctx) error {
 		"message": "user signin successful",
 	})
 }
+
+func LogOut(c *fiber.Ctx) error {
+	cookie := new(fiber.Cookie)
+	cookie.Name = "jwt"
+	cookie.Value = ""
+	cookie.Expires = time.Now().Add(-time.Hour)
+	cookie.HTTPOnly = true
+	c.Cookie(cookie)
+
+	return c.SendStatus(fiber.StatusNoContent)
+}

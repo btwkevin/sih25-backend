@@ -37,6 +37,7 @@ func main() {
 	app.Post("/signup", handlers.Signup)
 	app.Post("/signin", handlers.Signin)
 	app.Get("/home", handlers.JWTMiddleware, handlers.Home)
+	app.Get("/logout", handlers.LogOut)
 
 	app.Listen(":8080")
 }
