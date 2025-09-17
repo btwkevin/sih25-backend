@@ -17,8 +17,10 @@ func main() {
 	app := fiber.New()
 
 	app.Use(func(c *fiber.Ctx) error {
-		c.Set("Access-Control-Allow-Origin", "*")
-		c.Set("Access-Control-Allow-Headers", "*")
+		c.Set("Access-Control-Allow-Origin", "http://192.168.1.8:5500")
+		c.Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Set("Access-Control-Allow-Credentials", "true")
+		c.Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
 
 		if c.Method() == fiber.MethodOptions {
 			return c.SendStatus(fiber.StatusNoContent)
@@ -34,6 +36,7 @@ func main() {
 
 	app.Post("/signup", handlers.Signup)
 	app.Post("/signin", handlers.Signin)
+	app.Get("/home", handlers.JWTMiddleware, handlers.Home)
 
 	app.Listen(":8080")
 }

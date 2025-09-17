@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/btwkevin/sih25-backend/database"
 	"github.com/gofiber/fiber/v2"
 )
@@ -42,6 +44,23 @@ func Signin(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	token, err := GenerateJWT(user.Email)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate token",
+		})
+	}
+
+	cookie := new(fiber.Cookie)
+	cookie.Name = "jwt"
+	cookie.Value = token
+	cookie.Expires = time.Now().Add(24 * time.Hour)
+	cookie.HTTPOnly = true
+	cookie.Secure = false
+	cookie.SameSite = "Lax"
+	cookie.Path = "/"
+	c.Cookie(cookie)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "user signin successful",
