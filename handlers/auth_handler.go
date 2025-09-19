@@ -58,7 +58,7 @@ func Signin(c *fiber.Ctx) error {
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 	cookie.HTTPOnly = true
 	cookie.Secure = true
-	cookie.SameSite = "None"
+	cookie.SameSite = fiber.CookieSameSiteNoneMode
 	cookie.Path = "/"
 	c.Cookie(cookie)
 
