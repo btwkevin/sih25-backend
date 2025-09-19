@@ -1,0 +1,19 @@
+[Unit]
+Description=sih25 backend
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/sih25-backend
+ExecStart=/home/ubuntu/sih25-backend/main
+Restart=always
+RestartSec=5
+
+# Environment variables
+Environment=PORT=8080
+Environment=JWT=YourToken
+Environment=DB_PASSWORD=YourPassword
+Environment=DB_NAME=YourDB
+
+[Install]
+WantedBy=multi-user.target
