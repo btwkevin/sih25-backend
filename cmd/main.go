@@ -17,7 +17,7 @@ func main() {
 	app := fiber.New()
 
 	app.Use(func(c *fiber.Ctx) error {
-		c.Set("Access-Control-Allow-Origin", "sih25-frontend-psi.vercel.app")
+		c.Set("Access-Control-Allow-Origin", "https://sih25-frontend-psi.vercel.app")
 		c.Set("Access-Control-Allow-Headers", "Content-Type")
 		c.Set("Access-Control-Allow-Credentials", "true")
 		c.Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
